@@ -1,0 +1,24 @@
+{
+    "name": "simple-media-categories",
+    "version": "1.0.0",
+    "description": "Simple Media Categories WordPress plugin",
+    "private": true,
+    "license": "GPL-2.0-or-later",
+    "scripts": {
+        "build": "wp-scripts build",
+        "start": "wp-scripts start",
+        "lint:js": "wp-scripts lint-js",
+        "lint:css": "wp-scripts lint-style",
+        "plugin-zip": "npm run build && wp-scripts plugin-zip"
+    },
+    "files": [
+        "assets/**",
+        "build/**",
+        "includes/**",
+        "simple-media-categories.php",
+        "readme.txt"
+    ],
+    "devDependencies": {
+        "@wordpress/scripts": "^30.0.0"
+    }
+}
