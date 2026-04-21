@@ -17,6 +17,7 @@ class SMC_Taxonomy {
 	 */
 	public function register() {
 		add_action( 'init', array( $this, 'register_taxonomy' ), 0 );
+		add_action( 'admin_menu', array( $this, 'add_submenu' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'render_list_filter' ) );
 		add_action( 'parse_query', array( $this, 'filter_query' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
@@ -81,6 +82,19 @@ class SMC_Taxonomy {
 				array( 'term_taxonomy_id' => $term_id )
 			);
 		}
+	}
+
+	/**
+	 * Register a Categories submenu under the Media admin menu.
+	 */
+	public function add_submenu(): void {
+		add_submenu_page(
+			'upload.php',
+			__( 'Media Categories', 'simple-media-categories' ),
+			__( 'Categories', 'simple-media-categories' ),
+			'manage_categories',
+			'edit-tags.php?taxonomy=media_category&post_type=attachment'
+		);
 	}
 
 	/**
