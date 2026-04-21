@@ -15,19 +15,10 @@
 	Object.entries( smcTaxonomies ).forEach( ( [ slug, taxonomy ] ) => {
 		const filterId = `media-attachment-${ slug }-filter`;
 
-		/**
-		 * Renders as <div class="media-filter-container"> so the label and
-		 * select sit inside one wrapper, matching the built-in type/date filters.
-		 * All event/model wiring stays inside this single view — no wrapper view needed.
-		 */
 		const TaxFilter = wp.media.view.AttachmentFilters.extend( {
-			tagName:   'div',
-			className: 'media-filter-container',
-
-			// Delegate change events from the inner <select>, not the outer div.
-			events: {
-				'change select': 'change',
-			},
+			id:       filterId,
+			label:    taxonomy.filter_label,
+			priority: -75,
 
 			createFilters() {
 				const filters = {
@@ -49,50 +40,17 @@
 				this.filters = filters;
 			},
 
-			render() {
-				// Build label + select once; subsequent render() calls just repopulate options.
-				if ( ! this.$( 'select' ).length ) {
-					this.$el
-						.append( `<label for="${ filterId }">${ taxonomy.filter_label }</label>` )
-						.append( `<select id="${ filterId }" class="attachment-filters"></select>` );
-				}
-
-				const options = _.chain( this.filters )
-					.keys()
-					.sortBy( ( key ) => this.filters[ key ].priority || 10 )
-					.map( ( key ) => jQuery( '<option>' ).val( key ).html( this.filters[ key ].text )[ 0 ] )
-					.value();
-
-				this.$( 'select' ).html( options );
-				this.select();
-				return this;
-			},
-
+			/**
+			 * Override select() so any falsy model value (undefined, false, null, '')
+			 * correctly highlights "All categories".
+			 */
 			select() {
 				const val = this.model.get( slug );
-
-				// Treat any falsy value (undefined, false, null, '') as "show all".
 				if ( ! val ) {
-					this.$( 'select' ).val( '' );
+					this.$el.val( '' );
 					return;
 				}
-
-				const match = _.find( _.keys( this.filters ), ( id ) => {
-					return _.all( this.filters[ id ].props, ( prop, key ) => {
-						return this.model.get( key ) === prop;
-					} );
-				} );
-
-				this.$( 'select' ).val( match || '' );
-			},
-
-			change() {
-				const value  = this.$( 'select' ).val();
-				const filter = this.filters[ value ];
-
-				if ( filter ) {
-					this.model.set( filter.props );
-				}
+				wp.media.view.AttachmentFilters.prototype.select.apply( this, arguments );
 			},
 		} );
 
