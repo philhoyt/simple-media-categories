@@ -1,3 +1,5 @@
+/* global smcTaxonomies */
+
 /**
  * Grid-view toolbar filter for the media_category taxonomy.
  *
@@ -16,23 +18,23 @@
 		const filterId = `media-attachment-${ slug }-filter`;
 
 		const TaxFilter = wp.media.view.AttachmentFilters.extend( {
-			id:       filterId,
-			label:    taxonomy.filter_label,
+			id: filterId,
+			label: taxonomy.filter_label,
 			priority: -75,
 
 			createFilters() {
 				const filters = {
 					'': {
-						text:     taxonomy.list_title,
-						props:    { [ slug ]: undefined },
+						text: taxonomy.list_title,
+						props: { [ slug ]: undefined },
 						priority: 1,
 					},
 				};
 
 				taxonomy.term_list.forEach( ( term ) => {
 					filters[ term.term_id ] = {
-						text:     term.term_name,
-						props:    { [ slug ]: term.term_id },
+						text: term.term_name,
+						props: { [ slug ]: term.term_id },
 						priority: 10,
 					};
 				} );
@@ -50,7 +52,10 @@
 					this.$el.val( '' );
 					return;
 				}
-				wp.media.view.AttachmentFilters.prototype.select.apply( this, arguments );
+				wp.media.view.AttachmentFilters.prototype.select.apply(
+					this,
+					arguments
+				);
 			},
 		} );
 
@@ -64,8 +69,8 @@
 					`${ slug }Filter`,
 					new TaxFilter( {
 						controller: this.controller,
-						model:      this.collection.props,
-						priority:   -75,
+						model: this.collection.props,
+						priority: -75,
 					} ).render()
 				);
 			},

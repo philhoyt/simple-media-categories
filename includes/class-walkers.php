@@ -16,6 +16,8 @@ defined( 'ABSPATH' ) || exit;
 class SMC_Walker_Filter extends Walker_CategoryDropdown {
 
 	/**
+	 * Output an <option> element for a single term.
+	 *
 	 * @param string $output  Passed by reference. Used to append additional content.
 	 * @param object $term    The current term object.
 	 * @param int    $depth   Depth of the term.
@@ -48,6 +50,8 @@ class SMC_Walker_Filter extends Walker_CategoryDropdown {
 class SMC_Walker_Grid_Filter extends Walker_CategoryDropdown {
 
 	/**
+	 * No-op — the JSON output does not use list wrappers.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param int    $depth  Depth of the term.
 	 * @param array  $args   An array of arguments.
@@ -55,6 +59,8 @@ class SMC_Walker_Grid_Filter extends Walker_CategoryDropdown {
 	public function start_lvl( &$output, $depth = 0, $args = array() ) {}
 
 	/**
+	 * No-op — the JSON output does not use list wrappers.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param int    $depth  Depth of the term.
 	 * @param array  $args   An array of arguments.
@@ -62,6 +68,8 @@ class SMC_Walker_Grid_Filter extends Walker_CategoryDropdown {
 	public function end_lvl( &$output, $depth = 0, $args = array() ) {}
 
 	/**
+	 * No-op — JSON objects have no closing element.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param object $term   The current term object.
 	 * @param int    $depth  Depth of the term.
@@ -70,6 +78,8 @@ class SMC_Walker_Grid_Filter extends Walker_CategoryDropdown {
 	public function end_el( &$output, $term, $depth = 0, $args = array() ) {}
 
 	/**
+	 * Output a comma-prefixed JSON object for a single term.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param object $term   The current term object.
 	 * @param int    $depth  Depth of the term.
@@ -98,16 +108,26 @@ class SMC_Walker_Grid_Filter extends Walker_CategoryDropdown {
  */
 class SMC_Walker_Checklist extends Walker {
 
-	/** @var string */
+	/**
+	 * Walker type, mapped to the category tree.
+	 *
+	 * @var string
+	 */
 	public $tree_type = 'category';
 
-	/** @var array */
+	/**
+	 * Database fields used to build the tree.
+	 *
+	 * @var array
+	 */
 	public $db_fields = array(
 		'parent' => 'parent',
 		'id'     => 'term_id',
 	);
 
 	/**
+	 * Open a <ul class="children"> wrapper for child terms.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param int    $depth  Depth of the term.
 	 * @param array  $args   An array of arguments.
@@ -117,6 +137,8 @@ class SMC_Walker_Checklist extends Walker {
 	}
 
 	/**
+	 * Close the <ul class="children"> wrapper.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param int    $depth  Depth of the term.
 	 * @param array  $args   An array of arguments.
@@ -126,6 +148,8 @@ class SMC_Walker_Checklist extends Walker {
 	}
 
 	/**
+	 * Output a checkbox <li> for a single term.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param object $term   The current term object.
 	 * @param int    $depth  Depth of the term.
@@ -148,6 +172,8 @@ class SMC_Walker_Checklist extends Walker {
 	}
 
 	/**
+	 * Close the term <li> element.
+	 *
 	 * @param string $output Passed by reference.
 	 * @param object $term   The current term object.
 	 * @param int    $depth  Depth of the term.

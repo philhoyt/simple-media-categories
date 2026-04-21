@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ruleset name="SimpleMediaCategories">
+	<description>PHPCS configuration for Simple Media Categories.</description>
+
+	<file>simple-media-categories.php</file>
+	<file>includes/</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+
+	<rule ref="WordPress"/>
+
+	<!-- Project uses short file names (class-taxonomy.php, class-walkers.php)
+	     rather than fully-qualified class-name-based file names. -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>includes/</exclude-pattern>
+	</rule>
+
+	<!-- All three walker classes live in a single file by design. -->
+	<rule ref="Generic.Files.OneObjectStructurePerFile">
+		<exclude-pattern>includes/class-walkers.php</exclude-pattern>
+	</rule>
+
+	<!-- update_attachment_term_count requires direct DB access; there is no
+	     cached equivalent for a custom term-count callback on a non-public taxonomy. -->
+	<rule ref="WordPress.DB.DirectDatabaseQuery">
+		<exclude-pattern>includes/class-taxonomy.php</exclude-pattern>
+	</rule>
+
+	<!-- tax_query is the intended mechanism for this filtering plugin. -->
+	<rule ref="WordPress.DB.SlowDBQuery">
+		<exclude-pattern>includes/class-taxonomy.php</exclude-pattern>
+	</rule>
+</ruleset>

@@ -60,7 +60,7 @@ class SMC_Taxonomy {
 	 * @param int[]       $terms    Array of term taxonomy IDs to update.
 	 * @param WP_Taxonomy $taxonomy The taxonomy object.
 	 */
-	public static function update_attachment_term_count( array $terms, WP_Taxonomy $taxonomy ) {
+	public static function update_attachment_term_count( array $terms, WP_Taxonomy $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		global $wpdb;
 
 		foreach ( $terms as $term_id ) {
@@ -161,7 +161,7 @@ class SMC_Taxonomy {
 	 *
 	 * @param string $hook_suffix Current admin page hook.
 	 */
-	public function enqueue_assets( string $hook_suffix ) {
+	public function enqueue_assets( string $hook_suffix ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		if ( ! wp_script_is( 'media-editor', 'enqueued' ) ) {
 			return;
 		}
@@ -306,24 +306,19 @@ class SMC_Taxonomy {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$tax_input = isset( $_REQUEST['tax_input'] ) ? (array) $_REQUEST['tax_input'] : array();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$raw      = isset( $_REQUEST['tax_input']['media_category'] ) ? (array) wp_unslash( $_REQUEST['tax_input']['media_category'] ) : array();
+		$slugs    = array_map( 'sanitize_text_field', array_keys( $raw ) );
+		$term_ids = array();
 
-		if ( ! empty( $tax_input['media_category'] ) ) {
-			$slugs    = array_keys( (array) $tax_input['media_category'] );
-			$term_ids = array();
-
-			foreach ( $slugs as $slug ) {
-				$term = get_term_by( 'slug', sanitize_text_field( $slug ), 'media_category' );
-				if ( $term instanceof WP_Term ) {
-					$term_ids[] = $term->term_id;
-				}
+		foreach ( $slugs as $slug ) {
+			$term = get_term_by( 'slug', $slug, 'media_category' );
+			if ( $term instanceof WP_Term ) {
+				$term_ids[] = $term->term_id;
 			}
-
-			wp_set_object_terms( $id, $term_ids, 'media_category' );
-		} else {
-			wp_set_object_terms( $id, array(), 'media_category' );
 		}
+
+		wp_set_object_terms( $id, $term_ids, 'media_category' );
 	}
 
 	/**
