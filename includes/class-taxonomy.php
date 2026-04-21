@@ -24,6 +24,7 @@ class SMC_Taxonomy {
 		add_filter( 'attachment_fields_to_edit', array( $this, 'attachment_fields' ), 10, 2 );
 		add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_attachment_compat' ), 0 );
 		add_filter( 'ajax_query_attachments_args', array( $this, 'filter_ajax_query' ) );
+		add_action( 'add_attachment', array( $this, 'auto_assign_post_type_term' ) );
 	}
 
 	/**
@@ -323,6 +324,51 @@ class SMC_Taxonomy {
 		} else {
 			wp_set_object_terms( $id, array(), 'media_category' );
 		}
+	}
+
+	/**
+	 * Auto-assign a media_category term matching the parent post's post type
+	 * when an attachment is first uploaded.
+	 *
+	 * @param int $attachment_id The newly inserted attachment ID.
+	 */
+	public function auto_assign_post_type_term( int $attachment_id ): void {
+		$attachment = get_post( $attachment_id );
+
+		if ( ! $attachment || ! $attachment->post_parent ) {
+			return;
+		}
+
+		$parent = get_post( $attachment->post_parent );
+
+		if ( ! $parent ) {
+			return;
+		}
+
+		$post_type_obj = get_post_type_object( $parent->post_type );
+
+		if ( ! $post_type_obj || ! $post_type_obj->public ) {
+			return;
+		}
+
+		$label = $post_type_obj->labels->singular_name;
+		$slug  = $parent->post_type;
+
+		$term = get_term_by( 'slug', $slug, 'media_category' );
+
+		if ( ! $term ) {
+			$result = wp_insert_term( $label, 'media_category', array( 'slug' => $slug ) );
+
+			if ( is_wp_error( $result ) ) {
+				return;
+			}
+
+			$term_id = $result['term_id'];
+		} else {
+			$term_id = $term->term_id;
+		}
+
+		wp_add_object_terms( $attachment_id, $term_id, 'media_category' );
 	}
 
 	/**
