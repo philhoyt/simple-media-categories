@@ -25,6 +25,10 @@ class SMC_Taxonomy {
 		add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_attachment_compat' ), 0 );
 		add_filter( 'ajax_query_attachments_args', array( $this, 'filter_ajax_query' ) );
 		add_action( 'add_attachment', array( $this, 'auto_assign_post_type_term' ) );
+		add_filter( 'bulk_actions-upload', array( $this, 'register_bulk_action' ) );
+		add_filter( 'handle_bulk_actions-upload', array( $this, 'handle_bulk_action' ), 10, 3 );
+		add_action( 'admin_notices', array( $this, 'render_bulk_edit_form' ) );
+		add_action( 'admin_init', array( $this, 'process_bulk_edit_form' ) );
 	}
 
 	/**
@@ -161,7 +165,7 @@ class SMC_Taxonomy {
 	 *
 	 * @param string $hook_suffix Current admin page hook.
 	 */
-	public function enqueue_assets( string $hook_suffix ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	public function enqueue_assets( string $hook_suffix ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		if ( ! wp_script_is( 'media-editor', 'enqueued' ) ) {
 			return;
 		}
@@ -174,6 +178,139 @@ class SMC_Taxonomy {
 		);
 
 		$this->enqueue_grid_filter_script();
+	}
+
+	/**
+	 * Add "Edit Categories" to the media list bulk actions dropdown.
+	 *
+	 * @param array $actions Existing bulk actions.
+	 * @return array
+	 */
+	public function register_bulk_action( array $actions ): array {
+		$actions['smc_edit_categories'] = __( 'Edit Categories', 'simple-media-categories' );
+		return $actions;
+	}
+
+	/**
+	 * Handle the "Edit Categories" bulk action by redirecting to the category form.
+	 *
+	 * @param string $redirect_url The redirect URL after bulk action handling.
+	 * @param string $action       The current bulk action key.
+	 * @param int[]  $post_ids     Array of selected attachment IDs.
+	 * @return string
+	 */
+	public function handle_bulk_action( string $redirect_url, string $action, array $post_ids ): string {
+		if ( 'smc_edit_categories' !== $action ) {
+			return $redirect_url;
+		}
+
+		return add_query_arg(
+			array(
+				'smc_bulk_cats' => '1',
+				'ids'           => array_map( 'absint', $post_ids ),
+			),
+			admin_url( 'upload.php' )
+		);
+	}
+
+	/**
+	 * Render the bulk category edit form (or success notice) as an admin notice.
+	 */
+	public function render_bulk_edit_form(): void {
+		global $pagenow;
+
+		if ( 'upload.php' !== $pagenow ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! empty( $_GET['smc_bulk_updated'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$count = absint( $_GET['smc_bulk_updated'] );
+			printf(
+				'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+				sprintf(
+					/* translators: %d: number of attachments updated */
+					esc_html( _n( 'Categories updated for %d attachment.', 'Categories updated for %d attachments.', $count, 'simple-media-categories' ) ),
+					absint( $count )
+				)
+			);
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( empty( $_GET['smc_bulk_cats'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_ids = isset( $_GET['ids'] ) ? array_map( 'absint', (array) wp_unslash( $_GET['ids'] ) ) : array();
+
+		if ( ! $post_ids ) {
+			return;
+		}
+
+		$count = count( $post_ids );
+		?>
+		<div class="notice notice-info smc-bulk-edit-notice">
+			<form method="post">
+				<?php wp_nonce_field( 'smc_bulk_edit', 'smc_bulk_nonce' ); ?>
+				<?php foreach ( $post_ids as $id ) : ?>
+					<input type="hidden" name="smc_post_ids[]" value="<?php echo absint( $id ); ?>">
+				<?php endforeach; ?>
+				<p>
+					<strong>
+					<?php
+					printf(
+						/* translators: %d: number of selected attachments */
+						esc_html( _n( 'Set categories for %d attachment:', 'Set categories for %d attachments:', $count, 'simple-media-categories' ) ),
+						absint( $count )
+					);
+					?>
+					</strong>
+				</p>
+				<ul class="cat-checklist media_category-checklist">
+					<?php wp_terms_checklist( 0, array( 'taxonomy' => 'media_category' ) ); ?>
+				</ul>
+				<p>
+					<input type="submit" name="smc_bulk_submit" class="button button-primary" value="<?php esc_attr_e( 'Update Categories', 'simple-media-categories' ); ?>">
+					<a href="<?php echo esc_url( admin_url( 'upload.php' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'simple-media-categories' ); ?></a>
+				</p>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Process the bulk category edit form submission.
+	 */
+	public function process_bulk_edit_form(): void {
+		if ( empty( $_POST['smc_bulk_submit'] ) ) {
+			return;
+		}
+
+		if ( ! isset( $_POST['smc_bulk_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['smc_bulk_nonce'] ) ), 'smc_bulk_edit' ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'simple-media-categories' ) );
+		}
+
+		$post_ids = isset( $_POST['smc_post_ids'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['smc_post_ids'] ) ) : array();
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$term_ids = isset( $_POST['tax_input']['media_category'] )
+			? array_map( 'absint', (array) wp_unslash( $_POST['tax_input']['media_category'] ) )
+			: array();
+
+		$updated = 0;
+		foreach ( $post_ids as $post_id ) {
+			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+				continue;
+			}
+			wp_add_object_terms( $post_id, $term_ids, 'media_category' );
+			++$updated;
+		}
+
+		wp_safe_redirect( add_query_arg( 'smc_bulk_updated', $updated, admin_url( 'upload.php' ) ) );
+		exit;
 	}
 
 	/**

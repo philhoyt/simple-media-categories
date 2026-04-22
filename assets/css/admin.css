@@ -17,3 +17,17 @@
 .compat-attachment-fields .term-list {
 	margin-top: 5px;
 }
+
+/* Bulk edit notice form */
+.smc-bulk-edit-notice {
+	padding-bottom: 12px;
+}
+
+.smc-bulk-edit-notice .cat-checklist {
+	max-height: 200px;
+	overflow-y: auto;
+	margin: 8px 0 12px;
+	padding: 8px;
+	border: 1px solid #ddd;
+	background: #fff;
+}
