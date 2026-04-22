@@ -323,7 +323,7 @@ class SMC_Taxonomy {
 
 	/**
 	 * Auto-assign a media_category term matching the parent post's post type
-	 * when an attachment is first uploaded.
+	 * and a child term for the specific parent post when an attachment is uploaded.
 	 *
 	 * @param int $attachment_id The newly inserted attachment ID.
 	 */
@@ -346,24 +346,48 @@ class SMC_Taxonomy {
 			return;
 		}
 
-		$label = $post_type_obj->labels->singular_name;
-		$slug  = $parent->post_type;
+		$type_label = $post_type_obj->labels->singular_name;
+		$type_slug  = $parent->post_type;
 
-		$term = get_term_by( 'slug', $slug, 'media_category' );
+		$type_term = get_term_by( 'slug', $type_slug, 'media_category' );
 
-		if ( ! $term ) {
-			$result = wp_insert_term( $label, 'media_category', array( 'slug' => $slug ) );
+		if ( ! $type_term ) {
+			$result = wp_insert_term( $type_label, 'media_category', array( 'slug' => $type_slug ) );
 
 			if ( is_wp_error( $result ) ) {
 				return;
 			}
 
-			$term_id = $result['term_id'];
+			$type_term_id = $result['term_id'];
 		} else {
-			$term_id = $term->term_id;
+			$type_term_id = $type_term->term_id;
 		}
 
-		wp_add_object_terms( $attachment_id, $term_id, 'media_category' );
+		$post_slug = $type_slug . '-' . $parent->ID;
+		$post_term = get_term_by( 'slug', $post_slug, 'media_category' );
+
+		if ( ! $post_term ) {
+			$post_name = '' !== $parent->post_title ? $parent->post_title : __( 'Untitled', 'simple-media-categories' );
+			$result    = wp_insert_term(
+				$post_name,
+				'media_category',
+				array(
+					'slug'   => $post_slug,
+					'parent' => $type_term_id,
+				)
+			);
+
+			if ( is_wp_error( $result ) ) {
+				wp_add_object_terms( $attachment_id, $type_term_id, 'media_category' );
+				return;
+			}
+
+			$post_term_id = $result['term_id'];
+		} else {
+			$post_term_id = $post_term->term_id;
+		}
+
+		wp_add_object_terms( $attachment_id, array( $type_term_id, $post_term_id ), 'media_category' );
 	}
 
 	/**
