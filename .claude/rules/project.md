@@ -15,6 +15,6 @@ paths:
 - Text domain: `simple-media-categories`
 - PHP minimum: 7.4
 - WP minimum: 6.3
-- Distribution: GitHub (no release workflow)
+- Distribution: GitHub (Plugin Update Checker)
 - Main file: `simple-media-categories.php`
 - Version constant: `SMC_VERSION`
