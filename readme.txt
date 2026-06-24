@@ -43,6 +43,7 @@ Registers a single hierarchical `media_category` taxonomy on the attachment post
 * Add file-type auto-tagging: tag media by broad type (Images, Documents, Audio, Video, Other) under a File Type category.
 * Add a "Tag existing media now" tool to retroactively apply the enabled rules across an existing library, with a progress bar.
 * Add the smc_auto_tag_enabled, smc_mime_group, and smc_mime_groups filters for customization.
+* Add automatic updates from GitHub releases via Plugin Update Checker.
 
 = 1.1.0 =
 * Add the Tag Media workspace under Media: a React admin page to browse, search, filter, multi-select, and bulk-tag attachments.

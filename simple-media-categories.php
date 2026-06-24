@@ -28,6 +28,20 @@ require_once SMC_DIR . 'includes/class-rest-controller.php';
 require_once SMC_DIR . 'includes/class-admin-page.php';
 require_once SMC_DIR . 'includes/class-settings-page.php';
 
+require_once SMC_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
+
+$smc_update_checker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+	'https://github.com/philhoyt/simple-media-categories/',
+	__FILE__,
+	'simple-media-categories'
+);
+
+// Serve the zip attached to each GitHub release (GitHub VCS API only).
+$smc_vcs_api = $smc_update_checker->getVcsApi();
+if ( method_exists( $smc_vcs_api, 'enableReleaseAssets' ) ) {
+	$smc_vcs_api->enableReleaseAssets();
+}
+
 add_action(
 	'plugins_loaded',
 	function () {

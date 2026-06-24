@@ -23,6 +23,7 @@
         "build/**",
         "includes/**",
         "languages/**",
+        "lib/**",
         "simple-media-categories.php",
         "readme.txt"
     ],
