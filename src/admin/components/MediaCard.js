@@ -10,23 +10,17 @@ export default function MediaCard( {
 	selected,
 	onSelect,
 	termNames,
+	dimmed,
 } ) {
-	const { attributes, listeners, setNodeRef, transform, isDragging } =
-		useDraggable( {
-			id: `card-${ item.id }`,
-			data: { id: item.id },
-		} );
-
-	const style = transform
-		? {
-				transform: `translate3d(${ transform.x }px, ${ transform.y }px, 0)`,
-		  }
-		: undefined;
+	const { attributes, listeners, setNodeRef } = useDraggable( {
+		id: `card-${ item.id }`,
+		data: { id: item.id },
+	} );
 
 	const classes = [
 		'smc-card',
 		selected ? 'is-selected' : '',
-		isDragging ? 'is-dragging' : '',
+		dimmed ? 'is-dragging' : '',
 	]
 		.filter( Boolean )
 		.join( ' ' );
@@ -43,7 +37,6 @@ export default function MediaCard( {
 	return (
 		<div
 			ref={ setNodeRef }
-			style={ style }
 			className={ classes }
 			role="button"
 			tabIndex={ 0 }

@@ -10,6 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import {
 	DndContext,
+	DragOverlay,
 	PointerSensor,
 	useSensor,
 	useSensors,
@@ -21,6 +22,7 @@ import { indexTerms, buildTree } from './utils/terms';
 import TermSidebar from './components/TermSidebar';
 import MediaGrid from './components/MediaGrid';
 import BulkPanel from './components/BulkPanel';
+import DragStackPreview from './components/DragStackPreview';
 import Toaster from './components/Toaster';
 
 const PER_PAGE = 40;
@@ -34,6 +36,7 @@ export default function App() {
 	const [ loading, setLoading ] = useState( false );
 	const [ busy, setBusy ] = useState( false );
 	const [ searchInput, setSearchInput ] = useState( '' );
+	const [ activeId, setActiveId ] = useState( null );
 	const [ filter, setFilter ] = useState( {
 		mode: 'all',
 		termId: 0,
@@ -229,10 +232,41 @@ export default function App() {
 		useSensor( PointerSensor, { activationConstraint: { distance: 6 } } )
 	);
 
+	const itemsById = useMemo( () => {
+		const map = {};
+		items.forEach( ( item ) => {
+			map[ item.id ] = item;
+		} );
+		return map;
+	}, [ items ] );
+
+	// Ids that move together for the current drag: the whole selection when the
+	// grabbed card is part of it, otherwise just that card.
+	const draggingIds = useMemo( () => {
+		if ( activeId === null ) {
+			return [];
+		}
+		return selection.selected.has( activeId )
+			? Array.from( selection.selected )
+			: [ activeId ];
+	}, [ activeId, selection ] );
+
+	const draggingSet = useMemo(
+		() => new Set( draggingIds ),
+		[ draggingIds ]
+	);
+
+	const handleDragStart = useCallback( ( event ) => {
+		setActiveId( event.active?.data?.current?.id ?? null );
+	}, [] );
+
+	const handleDragCancel = useCallback( () => setActiveId( null ), [] );
+
 	const handleDragEnd = useCallback(
 		( event ) => {
 			const termId = event.over?.data?.current?.termId;
 			const draggedId = event.active?.data?.current?.id;
+			setActiveId( null );
 			if ( ! termId || ! draggedId ) {
 				return;
 			}
@@ -250,7 +284,12 @@ export default function App() {
 	);
 
 	return (
-		<DndContext sensors={ sensors } onDragEnd={ handleDragEnd }>
+		<DndContext
+			sensors={ sensors }
+			onDragStart={ handleDragStart }
+			onDragEnd={ handleDragEnd }
+			onDragCancel={ handleDragCancel }
+		>
 			<div className="smc-app">
 				<h1 className="smc-app__title">
 					{ __( 'Tag Media', 'simple-media-categories' ) }
@@ -276,6 +315,7 @@ export default function App() {
 						onSelectAll={ selection.selectAll }
 						onClear={ selection.clear }
 						termsById={ termsById }
+						draggingIds={ draggingSet }
 						onLoadMore={ () => loadPage( page + 1, false ) }
 					/>
 					<BulkPanel
@@ -290,6 +330,16 @@ export default function App() {
 				</div>
 				<Toaster />
 			</div>
+			<DragOverlay>
+				{ activeId !== null ? (
+					<DragStackPreview
+						items={ draggingIds
+							.map( ( id ) => itemsById[ id ] )
+							.filter( Boolean ) }
+						count={ draggingIds.length }
+					/>
+				) : null }
+			</DragOverlay>
 		</DndContext>
 	);
 }

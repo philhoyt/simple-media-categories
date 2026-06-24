@@ -18,6 +18,7 @@ export default function MediaGrid( {
 	onSelectAll,
 	onClear,
 	termsById,
+	draggingIds,
 	onLoadMore,
 } ) {
 	const orderedIds = items.map( ( item ) => item.id );
@@ -97,6 +98,7 @@ export default function MediaGrid( {
 						selected={ selected.has( item.id ) }
 						onSelect={ handleSelect }
 						termNames={ termNamesFor( item ) }
+						dimmed={ draggingIds.has( item.id ) }
 					/>
 				) ) }
 			</div>

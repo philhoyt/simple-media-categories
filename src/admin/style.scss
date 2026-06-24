@@ -409,6 +409,57 @@
 	}
 }
 
+/* Drag stack overlay -------------------------------------------------- */
+.smc-dragstack {
+	position: relative;
+	width: 76px;
+	height: 76px;
+	pointer-events: none;
+
+	&__card {
+		position: absolute;
+		inset: 0;
+		width: 64px;
+		height: 64px;
+		background: #fff;
+		border: 1px solid #c3c4c7;
+		border-radius: 4px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__placeholder {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: #f0f0f1;
+	}
+
+	&__badge {
+		position: absolute;
+		top: -8px;
+		right: -8px;
+		z-index: 10;
+		min-width: 22px;
+		height: 22px;
+		padding: 0 6px;
+		border-radius: 11px;
+		background: #2271b1;
+		color: #fff;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 22px;
+		text-align: center;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	}
+}
+
 /* Toaster ------------------------------------------------------------- */
 .smc-toaster {
 	position: fixed;
