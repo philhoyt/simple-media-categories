@@ -26,6 +26,7 @@ require_once SMC_DIR . 'includes/class-auto-tagger.php';
 require_once SMC_DIR . 'includes/class-taxonomy.php';
 require_once SMC_DIR . 'includes/class-rest-controller.php';
 require_once SMC_DIR . 'includes/class-admin-page.php';
+require_once SMC_DIR . 'includes/class-settings-page.php';
 
 add_action(
 	'plugins_loaded',
@@ -35,5 +36,6 @@ add_action(
 		( new SMC_Taxonomy() )->register();
 		( new SMC_REST_Controller() )->register();
 		( new SMC_Admin_Page() )->register();
+		( new SMC_Settings_Page() )->register();
 	}
 );
