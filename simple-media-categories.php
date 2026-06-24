@@ -21,6 +21,7 @@ define( 'SMC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SMC_URL', plugin_dir_url( __FILE__ ) );
 
 require_once SMC_DIR . 'includes/class-walkers.php';
+require_once SMC_DIR . 'includes/class-settings.php';
 require_once SMC_DIR . 'includes/class-taxonomy.php';
 require_once SMC_DIR . 'includes/class-rest-controller.php';
 require_once SMC_DIR . 'includes/class-admin-page.php';
@@ -28,6 +29,7 @@ require_once SMC_DIR . 'includes/class-admin-page.php';
 add_action(
 	'plugins_loaded',
 	function () {
+		( new SMC_Settings() )->register();
 		( new SMC_Taxonomy() )->register();
 		( new SMC_REST_Controller() )->register();
 		( new SMC_Admin_Page() )->register();
