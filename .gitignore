@@ -3,3 +3,6 @@ build/
 .DS_Store
 *.zip
 .claude/settings.local.json
+plans/
+vendor/
+.phpunit.result.cache
