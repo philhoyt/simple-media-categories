@@ -118,7 +118,7 @@ class SMC_Walker_Checklist extends Walker {
 	/**
 	 * Database fields used to build the tree.
 	 *
-	 * @var array
+	 * @var array<string, string>
 	 */
 	public $db_fields = array(
 		'parent' => 'parent',

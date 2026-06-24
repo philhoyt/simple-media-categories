@@ -1,0 +1,31 @@
+# Files and directories excluded from the distributed plugin zip.
+# (plugin-zip uses package.json "files" as the primary whitelist; this is a
+# belt-and-braces blacklist and documents intent.)
+
+/.git
+/.github
+/.claude
+/.wp-env.json
+/node_modules
+/vendor
+/src
+/tests
+/plans
+/docs
+
+/.gitignore
+/.distignore
+/.editorconfig
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/phpcs.xml
+/phpunit.xml.dist
+/phpstan.neon
+/webpack.config.js
+/eslint.config.js
+/.phpunit.result.cache
+
+*.zip
+*.log
