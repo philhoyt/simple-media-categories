@@ -3,7 +3,7 @@
  * Plugin Name:       Simple Media Categories
  * Plugin URI:        https://github.com/ph/simple-media-categories
  * Description:       Registers a hierarchical media category taxonomy on attachments. No settings. No front-end output.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Phil Hoyt
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SMC_VERSION', '1.1.0' );
+define( 'SMC_VERSION', '1.2.0' );
 define( 'SMC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SMC_URL', plugin_dir_url( __FILE__ ) );
 

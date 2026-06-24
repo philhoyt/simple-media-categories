@@ -13,7 +13,8 @@ Registers a single hierarchical `media_category` taxonomy on the WordPress attac
 - Block editor media modal: toolbar filter (same JS, no extra code needed)
 - Attachment edit screen: standard taxonomy metabox (no extra code needed)
 - **Tag Media workspace** (Media > Tag Media): a React admin page to browse, search, filter, multi-select, and bulk-tag attachments — with path-aware autocomplete, inline category creation, and drag-and-drop tagging
-- REST API support (`show_in_rest => true`), plus a custom `simple-media-categories/v1` namespace powering the Tag Media workspace
+- **Auto-tagging** (Media > Settings): toggle tagging by attached post and/or by file type (Images, Documents, Audio, Video, Other under a `File Type` parent), plus a **"Tag existing media now"** tool to retroactively tag a library you already have
+- REST API support (`show_in_rest => true`), plus a custom `simple-media-categories/v1` namespace powering the Tag Media workspace and the retroactive tagging tool
 
 ## Requirements
 
@@ -32,7 +33,6 @@ npm run build
 
 - Front-end filtering or display
 - Shortcodes or blocks
-- Settings or options UI
 - Category colors / term metadata
 - Term management (rename/merge/delete) beyond creation — use the core Categories screen
 - Import/export of category assignments
