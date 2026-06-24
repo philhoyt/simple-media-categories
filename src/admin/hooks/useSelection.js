@@ -24,10 +24,13 @@ export default function useSelection() {
 	}, [] );
 
 	const range = useCallback( ( index, orderedIds ) => {
+		// Read the anchor before mutating it — the setSelected updater runs
+		// after this function returns, by which point anchor.current would
+		// already equal `index`.
+		const start = anchor.current === null ? index : anchor.current;
+		const lo = Math.min( start, index );
+		const hi = Math.max( start, index );
 		setSelected( ( prev ) => {
-			const start = anchor.current === null ? index : anchor.current;
-			const lo = Math.min( start, index );
-			const hi = Math.max( start, index );
 			const next = new Set( prev );
 			for ( let i = lo; i <= hi; i++ ) {
 				if ( orderedIds[ i ] !== undefined ) {
