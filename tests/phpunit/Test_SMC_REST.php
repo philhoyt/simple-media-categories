@@ -20,6 +20,13 @@ class Test_SMC_REST extends WP_Test_REST_TestCase {
 	private $server;
 
 	/**
+	 * Administrator user ID (has manage_options).
+	 *
+	 * @var int
+	 */
+	private $admin;
+
+	/**
 	 * Editor user ID (has upload_files + manage_categories + edit_others_posts).
 	 *
 	 * @var int
@@ -48,6 +55,7 @@ class Test_SMC_REST extends WP_Test_REST_TestCase {
 		$wp_rest_server = $this->server;
 		do_action( 'rest_api_init' );
 
+		$this->admin      = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		$this->editor     = self::factory()->user->create( array( 'role' => 'editor' ) );
 		$this->author     = self::factory()->user->create( array( 'role' => 'author' ) );
 		$this->subscriber = self::factory()->user->create( array( 'role' => 'subscriber' ) );
@@ -282,5 +290,66 @@ class Test_SMC_REST extends WP_Test_REST_TestCase {
 			$this->subscriber
 		);
 		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/* Retroactive tagging --------------------------------------------- */
+
+	public function test_retag_requires_manage_options(): void {
+		$response = $this->dispatch( 'POST', '/simple-media-categories/v1/maintenance/retag', array(), $this->editor );
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function test_retag_batches_and_applies_rules(): void {
+		update_option(
+			'smc_settings',
+			array(
+				'auto_tag_post' => false,
+				'auto_tag_mime' => true,
+			)
+		);
+		$a = $this->make_attachment();
+		$b = $this->make_attachment();
+		$c = $this->make_attachment();
+		foreach ( array( $a, $b, $c ) as $id ) {
+			wp_update_post(
+				array(
+					'ID'             => $id,
+					'post_mime_type' => 'image/png',
+				)
+			);
+		}
+
+		$first = $this->dispatch(
+			'POST',
+			'/simple-media-categories/v1/maintenance/retag',
+			array(
+				'offset'     => 0,
+				'batch_size' => 2,
+			),
+			$this->admin
+		);
+		$this->assertSame( 200, $first->get_status() );
+		$this->assertSame( 3, $first->get_data()['total'] );
+		$this->assertSame( 2, $first->get_data()['processed'] );
+		$this->assertFalse( $first->get_data()['done'] );
+
+		$second = $this->dispatch(
+			'POST',
+			'/simple-media-categories/v1/maintenance/retag',
+			array(
+				'offset'     => $first->get_data()['offset'],
+				'batch_size' => 2,
+			),
+			$this->admin
+		);
+		$this->assertSame( 3, $second->get_data()['processed'] );
+		$this->assertTrue( $second->get_data()['done'] );
+
+		$this->assertContains(
+			'file-type-images',
+			wp_get_object_terms( $a, 'media_category', array( 'fields' => 'slugs' ) )
+		);
+
+		delete_option( 'smc_settings' );
 	}
 }

@@ -10,5 +10,6 @@ module.exports = {
 	entry: {
 		index: path.resolve( process.cwd(), 'src', 'index.js' ),
 		admin: path.resolve( process.cwd(), 'src', 'admin', 'index.js' ),
+		settings: path.resolve( process.cwd(), 'src', 'settings', 'index.js' ),
 	},
 };

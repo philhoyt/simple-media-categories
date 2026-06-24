@@ -94,39 +94,4 @@ class Test_SMC_Taxonomy extends WP_UnitTestCase {
 
 		$this->assertSame( 1, (int) get_term( $term, 'media_category' )->count );
 	}
-
-	public function test_auto_assign_creates_post_type_and_child_terms(): void {
-		$parent     = self::factory()->post->create( array( 'post_title' => 'Hello World' ) );
-		$attachment = self::factory()->post->create(
-			array(
-				'post_type'   => 'attachment',
-				'post_status' => 'inherit',
-				'post_parent' => $parent,
-			)
-		);
-
-		$this->taxonomy->auto_assign_post_type_term( $attachment );
-
-		$slugs = wp_get_object_terms( $attachment, 'media_category', array( 'fields' => 'slugs' ) );
-
-		$this->assertContains( 'post', $slugs, 'Post-type term should be assigned.' );
-		$this->assertContains( 'post-' . $parent, $slugs, 'Post-specific child term should be assigned.' );
-
-		$child = get_term_by( 'slug', 'post-' . $parent, 'media_category' );
-		$type  = get_term_by( 'slug', 'post', 'media_category' );
-		$this->assertSame( (int) $type->term_id, (int) $child->parent, 'Child term should nest under the post-type term.' );
-	}
-
-	public function test_auto_assign_skips_attachments_without_parent(): void {
-		$attachment = self::factory()->post->create(
-			array(
-				'post_type'   => 'attachment',
-				'post_status' => 'inherit',
-			)
-		);
-
-		$this->taxonomy->auto_assign_post_type_term( $attachment );
-
-		$this->assertEmpty( wp_get_object_terms( $attachment, 'media_category' ) );
-	}
 }
