@@ -87,6 +87,6 @@ class SMC_Settings_Page {
 			$asset['version']
 		);
 
-		wp_set_script_translations( 'smc-settings', 'simple-media-categories' );
+		wp_set_script_translations( 'smc-settings', 'simple-media-categories', SMC_DIR . 'languages' );
 	}
 }
