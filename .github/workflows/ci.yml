@@ -32,6 +32,9 @@ jobs:
       - name: Lint (phpcs)
         run: ./vendor/bin/phpcs
 
+      - name: Static analysis (phpstan)
+        run: composer run analyse
+
   js:
     name: JavaScript
     runs-on: ubuntu-latest
