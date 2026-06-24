@@ -74,13 +74,18 @@ npm run test:php       # PHPUnit via wp-env
 
 ## Releases
 
-Distribution is GitHub-based via Plugin Update Checker. To cut a release:
+Distribution is GitHub-based via Plugin Update Checker; installed sites receive updates from GitHub releases.
 
-1. Bump `Version` and `SMC_VERSION` in `simple-media-categories.php` and `Stable tag` in `readme.txt`, and add a changelog entry.
-2. Run `npm run plugin-zip` to build assets and package the distributable zip (the `files` whitelist in `package.json` controls its contents).
-3. Create a GitHub release and attach the zip.
+To cut a release:
 
-There is no automated release workflow yet; CI (`.github/workflows/ci.yml`) runs lint, static analysis, and tests on pull requests and pushes to `main`.
+1. Bump `Version` and `SMC_VERSION` in `simple-media-categories.php` and `Stable tag` in `readme.txt`, and add a changelog entry under `== Changelog ==`.
+2. Commit, then push a `v`-prefixed tag matching the version:
+
+```bash
+git tag v1.2.0 && git push origin v1.2.0
+```
+
+The release workflow (`.github/workflows/release.yml`) builds assets, packages the zip with `npm run plugin-zip`, and publishes a GitHub release with the zip and the matching changelog section. Plugin Update Checker serves that zip to installed sites. CI (`.github/workflows/ci.yml`) runs lint, static analysis, and tests on pull requests and pushes to `main`.
 
 ## Out of Scope
 
