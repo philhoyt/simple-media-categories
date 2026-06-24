@@ -90,6 +90,6 @@ class SMC_Admin_Page {
 			$asset['version']
 		);
 
-		wp_set_script_translations( 'smc-admin', 'simple-media-categories' );
+		wp_set_script_translations( 'smc-admin', 'simple-media-categories', SMC_DIR . 'languages' );
 	}
 }
