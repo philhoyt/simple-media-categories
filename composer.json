@@ -1,6 +1,9 @@
 {
     "name": "philhoyt/simple-media-categories",
     "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.4"
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.13",
         "wp-coding-standards/wpcs": "^3.3",
@@ -9,6 +12,9 @@
         "yoast/phpunit-polyfills": "^2.0"
     },
     "config": {
+        "platform": {
+            "php": "7.4"
+        },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
