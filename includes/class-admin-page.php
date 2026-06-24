@@ -85,7 +85,7 @@ class SMC_Admin_Page {
 
 		wp_enqueue_style(
 			'smc-admin-app',
-			SMC_URL . 'build/admin.css',
+			SMC_URL . 'build/style-admin.css',
 			array( 'wp-components' ),
 			$asset['version']
 		);
