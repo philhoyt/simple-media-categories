@@ -426,7 +426,12 @@ class SMC_Taxonomy {
 	 * via the default handler at priority 10.
 	 */
 	public function save_attachment_compat() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Verify the same nonce core checks in its priority-10 handler. Bail
+		// non-fatally so the default handler can still send its own response.
+		if ( ! check_ajax_referer( 'save-attachment-compat', 'nonce', false ) ) {
+			return;
+		}
+
 		$id = isset( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 
 		if ( ! $id ) {
@@ -443,7 +448,7 @@ class SMC_Taxonomy {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$raw      = isset( $_REQUEST['tax_input']['media_category'] ) ? (array) wp_unslash( $_REQUEST['tax_input']['media_category'] ) : array();
 		$slugs    = array_map( 'sanitize_text_field', array_keys( $raw ) );
 		$term_ids = array();
