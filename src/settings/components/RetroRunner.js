@@ -7,7 +7,7 @@ import { Button, Card, CardBody, ProgressBar } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 
-import { retag } from '../api';
+import { runRetag } from '../api';
 
 export default function RetroRunner( { enabled } ) {
 	const [ running, setRunning ] = useState( false );
@@ -18,16 +18,8 @@ export default function RetroRunner( { enabled } ) {
 		setRunning( true );
 		setProgress( { processed: 0, total: 0 } );
 
-		let offset = 0;
-		let done = false;
-
 		try {
-			while ( ! done ) {
-				const res = await retag( offset, 50 );
-				setProgress( { processed: res.processed, total: res.total } );
-				done = res.done || res.offset === offset;
-				offset = res.offset;
-			}
+			await runRetag( setProgress );
 			createNotice(
 				'success',
 				__( 'Existing media tagged.', 'simple-media-categories' ),

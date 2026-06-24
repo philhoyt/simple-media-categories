@@ -48,3 +48,25 @@ export function retag( offset = 0, batchSize = 50 ) {
 		data: { offset, batch_size: batchSize },
 	} );
 }
+
+/**
+ * Run the full retroactive tagging loop, batch by batch, until done.
+ *
+ * @param {Function} onProgress Called with { processed, total } after each batch.
+ * @param {number}   batchSize  Items per batch.
+ * @return {Promise<void>} Resolves when every batch is processed.
+ */
+export async function runRetag( onProgress, batchSize = 50 ) {
+	let offset = 0;
+	let done = false;
+
+	while ( ! done ) {
+		const res = await retag( offset, batchSize );
+		if ( onProgress ) {
+			onProgress( { processed: res.processed, total: res.total } );
+		}
+		// Stop on the server's done flag, or if the offset fails to advance.
+		done = res.done || res.offset === offset;
+		offset = res.offset;
+	}
+}
