@@ -110,6 +110,26 @@ class SMC_REST_Controller {
 				),
 			)
 		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/maintenance/retag',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'retag' ),
+				'permission_callback' => array( $this, 'can_manage' ),
+				'args'                => array(
+					'offset'     => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'batch_size' => array(
+						'type'    => 'integer',
+						'default' => 50,
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -128,6 +148,15 @@ class SMC_REST_Controller {
 	 */
 	public function can_create_term(): bool {
 		return current_user_can( 'manage_categories' );
+	}
+
+	/**
+	 * Site-administration permission (settings + maintenance).
+	 *
+	 * @return bool
+	 */
+	public function can_manage(): bool {
+		return current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -299,6 +328,49 @@ class SMC_REST_Controller {
 				'updated' => $updated,
 				'skipped' => $skipped,
 				'counts'  => $this->term_counts(),
+			)
+		);
+	}
+
+	/**
+	 * POST /maintenance/retag — apply enabled auto-tagging rules to a batch of
+	 * existing attachments. Driven in a loop by the settings screen.
+	 *
+	 * @param WP_REST_Request $request The request.
+	 * @return WP_REST_Response
+	 */
+	public function retag( WP_REST_Request $request ) {
+		$batch_size = min( 200, max( 1, (int) $request['batch_size'] ) );
+		$offset     = max( 0, (int) $request['offset'] );
+
+		$query = new WP_Query(
+			array(
+				'post_type'      => 'attachment',
+				'post_status'    => 'inherit',
+				'posts_per_page' => $batch_size,
+				'offset'         => $offset,
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+				'fields'         => 'ids',
+			)
+		);
+
+		$tagger = new SMC_Auto_Tagger();
+		foreach ( $query->posts as $id ) {
+			$tagger->tag_attachment( (int) $id );
+		}
+
+		$count     = count( $query->posts );
+		$total     = (int) $query->found_posts;
+		$processed = $offset + $count;
+		$done      = 0 === $count || $processed >= $total;
+
+		return rest_ensure_response(
+			array(
+				'total'     => $total,
+				'processed' => $processed,
+				'offset'    => $processed,
+				'done'      => $done,
 			)
 		);
 	}
