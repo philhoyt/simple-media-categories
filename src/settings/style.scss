@@ -1,0 +1,52 @@
+/**
+ * Media Category Settings screen styles.
+ */
+
+.smc-settings {
+	max-width: 720px;
+
+	&__title {
+		margin-bottom: 16px;
+	}
+
+	.components-card {
+		margin-bottom: 16px;
+	}
+
+	&__subhead {
+		margin: 0 0 4px;
+		font-size: 14px;
+	}
+
+	&__hint {
+		color: #787c82;
+		font-size: 12px;
+		margin: 8px 0 0;
+	}
+
+	&__progress {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-top: 12px;
+	}
+
+	&__progress-label {
+		font-size: 12px;
+		color: #787c82;
+		white-space: nowrap;
+	}
+
+	&--loading {
+		padding: 48px 0;
+		text-align: center;
+	}
+}
+
+/* Snackbar toasts (shared component, positioned here too). */
+.smc-toaster {
+	position: fixed;
+	left: 24px;
+	bottom: 24px;
+	z-index: 100000;
+}
