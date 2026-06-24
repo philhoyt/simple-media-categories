@@ -392,6 +392,21 @@
 		font-size: 11px;
 		color: #787c82;
 	}
+
+	&__placeholder {
+		margin: 0;
+		font-size: 13px;
+		color: #787c82;
+		text-align: center;
+	}
+
+	&--empty {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 120px;
+		border-style: dashed;
+	}
 }
 
 /* Toaster ------------------------------------------------------------- */

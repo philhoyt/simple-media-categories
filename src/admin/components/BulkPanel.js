@@ -22,8 +22,19 @@ export default function BulkPanel( {
 } ) {
 	const [ pending, setPending ] = useState( [] );
 
+	// Always render the panel so it never reflows the grid when a selection
+	// appears or clears — show a placeholder when nothing is selected.
 	if ( ! selectedItems.length ) {
-		return null;
+		return (
+			<aside className="smc-bulk smc-bulk--empty">
+				<p className="smc-bulk__placeholder">
+					{ __(
+						'Select media to add or remove categories.',
+						'simple-media-categories'
+					) }
+				</p>
+			</aside>
+		);
 	}
 
 	const distribution = termDistribution( selectedItems );
