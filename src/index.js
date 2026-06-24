@@ -1,5 +1,3 @@
-/* global smcTaxonomies */
-
 /**
  * Grid-view toolbar filter for the media_category taxonomy.
  *
