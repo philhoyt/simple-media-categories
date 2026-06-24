@@ -9,7 +9,9 @@
         "wp-coding-standards/wpcs": "^3.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
         "phpunit/phpunit": "^9.6",
-        "yoast/phpunit-polyfills": "^2.0"
+        "yoast/phpunit-polyfills": "^2.0",
+        "phpstan/phpstan": "^2.2",
+        "szepeviktor/phpstan-wordpress": "^2.0"
     },
     "config": {
         "platform": {
@@ -18,5 +20,10 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf",
+        "analyse": "phpstan analyse --memory-limit=1G"
     }
 }
