@@ -24,7 +24,6 @@ class SMC_Taxonomy {
 		add_filter( 'attachment_fields_to_edit', array( $this, 'attachment_fields' ), 10, 2 );
 		add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_attachment_compat' ), 0 );
 		add_filter( 'ajax_query_attachments_args', array( $this, 'filter_ajax_query' ) );
-		add_action( 'add_attachment', array( $this, 'auto_assign_post_type_term' ) );
 		add_filter( 'bulk_actions-upload', array( $this, 'register_bulk_action' ) );
 		add_filter( 'handle_bulk_actions-upload', array( $this, 'handle_bulk_action' ), 10, 3 );
 		add_action( 'admin_notices', array( $this, 'render_bulk_edit_form' ) );
@@ -461,75 +460,6 @@ class SMC_Taxonomy {
 		}
 
 		wp_set_object_terms( $id, $term_ids, 'media_category' );
-	}
-
-	/**
-	 * Auto-assign a media_category term matching the parent post's post type
-	 * and a child term for the specific parent post when an attachment is uploaded.
-	 *
-	 * @param int $attachment_id The newly inserted attachment ID.
-	 */
-	public function auto_assign_post_type_term( int $attachment_id ): void {
-		$attachment = get_post( $attachment_id );
-
-		if ( ! $attachment || ! $attachment->post_parent ) {
-			return;
-		}
-
-		$parent = get_post( $attachment->post_parent );
-
-		if ( ! $parent ) {
-			return;
-		}
-
-		$post_type_obj = get_post_type_object( $parent->post_type );
-
-		if ( ! $post_type_obj || ! $post_type_obj->public ) {
-			return;
-		}
-
-		$type_label = $post_type_obj->labels->singular_name;
-		$type_slug  = $parent->post_type;
-
-		$type_term = get_term_by( 'slug', $type_slug, 'media_category' );
-
-		if ( ! $type_term ) {
-			$result = wp_insert_term( $type_label, 'media_category', array( 'slug' => $type_slug ) );
-
-			if ( is_wp_error( $result ) ) {
-				return;
-			}
-
-			$type_term_id = $result['term_id'];
-		} else {
-			$type_term_id = $type_term->term_id;
-		}
-
-		$post_slug = $type_slug . '-' . $parent->ID;
-		$post_term = get_term_by( 'slug', $post_slug, 'media_category' );
-
-		if ( ! $post_term ) {
-			$post_name = '' !== $parent->post_title ? $parent->post_title : __( 'Untitled', 'simple-media-categories' );
-			$result    = wp_insert_term(
-				$post_name,
-				'media_category',
-				array(
-					'slug'   => $post_slug,
-					'parent' => $type_term_id,
-				)
-			);
-
-			if ( is_wp_error( $result ) ) {
-				wp_add_object_terms( $attachment_id, $type_term_id, 'media_category' );
-				return;
-			}
-
-			$post_term_id = $result['term_id'];
-		} else {
-			$post_term_id = $post_term->term_id;
-		}
-
-		wp_add_object_terms( $attachment_id, array( $type_term_id, $post_term_id ), 'media_category' );
 	}
 
 	/**
