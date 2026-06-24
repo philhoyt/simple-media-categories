@@ -1,5 +1,7 @@
 # Simple Media Categories
 
+[![CI](https://github.com/philhoyt/simple-media-categories/actions/workflows/ci.yml/badge.svg)](https://github.com/philhoyt/simple-media-categories/actions/workflows/ci.yml)
+
 Registers a single hierarchical `media_category` taxonomy on the WordPress attachment post type. Adds category filtering to both the media library list view and grid view, and a checkbox assignment panel in the attachment details sidebar.
 
 ## Features
