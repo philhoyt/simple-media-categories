@@ -149,7 +149,7 @@ class Test_SMC_REST extends WP_Test_REST_TestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertCount( 2, $response->get_data() );
-		$this->assertSame( 2, $response->get_headers()['X-WP-Total'] );
+		$this->assertSame( '2', $response->get_headers()['X-WP-Total'] );
 	}
 
 	public function test_media_untagged_filter(): void {
