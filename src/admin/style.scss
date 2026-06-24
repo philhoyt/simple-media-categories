@@ -137,6 +137,11 @@
 		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 	}
 
+	&:focus-visible {
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
+
 	&.is-selected {
 		border-color: #2271b1;
 		box-shadow: 0 0 0 1px #2271b1;
