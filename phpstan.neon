@@ -5,6 +5,9 @@ parameters:
     level: 5
     bootstrapFiles:
         - tests/phpstan/constants.php
+    scanDirectories:
+        # Index the Plugin Update Checker classes (shipped, not analysed).
+        - lib/plugin-update-checker
     paths:
         - simple-media-categories.php
         - includes

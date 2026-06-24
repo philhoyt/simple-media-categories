@@ -8,6 +8,10 @@
 const wordpress = require( '@wordpress/scripts/config/eslint.config.cjs' );
 
 module.exports = [
+	{
+		// Third-party libraries shipped as-is (Plugin Update Checker).
+		ignores: [ 'lib/**', 'build/**', 'vendor/**', 'node_modules/**' ],
+	},
 	...wordpress,
 	{
 		languageOptions: {
