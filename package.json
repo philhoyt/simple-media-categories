@@ -25,6 +25,7 @@
         "languages/**",
         "lib/**",
         "simple-media-categories.php",
+        "uninstall.php",
         "readme.txt"
     ],
     "devDependencies": {

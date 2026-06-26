@@ -3,6 +3,7 @@
 	<description>PHPCS configuration for Simple Media Categories.</description>
 
 	<file>simple-media-categories.php</file>
+	<file>uninstall.php</file>
 	<file>includes/</file>
 
 	<arg name="extensions" value="php"/>
