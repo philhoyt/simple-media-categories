@@ -4,6 +4,7 @@ build/
 *.zip
 .claude/settings.local.json
 plans/
-vendor/
+# Composer's vendor/ only. lib/plugin-update-checker/vendor/ is PUC's own and must ship.
+/vendor/
 .phpunit.result.cache
 .wp-env.override.json
