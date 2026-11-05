@@ -2,7 +2,7 @@
 Contributors: philhoyt
 Tags: media, categories, taxonomy, attachments
 Requires at least: 6.3
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 1.2.0
 Requires PHP: 7.4
 License: GPL-2.0-or-later
