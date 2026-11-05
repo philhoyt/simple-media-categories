@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Simple Media Categories
- * Plugin URI:        https://github.com/ph/simple-media-categories
- * Description:       Registers a hierarchical media category taxonomy on attachments. No settings. No front-end output.
+ * Plugin URI:        https://github.com/philhoyt/simple-media-categories
+ * Description:       Adds a hierarchical category taxonomy to the media library, with filters in the list and grid views, bulk tagging, and auto-tagging on upload.
  * Version:           1.3.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
