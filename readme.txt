@@ -3,7 +3,7 @@ Contributors: philhoyt
 Tags: media, categories, taxonomy, attachments
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -37,6 +37,10 @@ Registers a single hierarchical `media_category` taxonomy on the attachment post
 3. Categories will appear under Media > Categories.
 
 == Changelog ==
+
+= 1.3.0 =
+* Add: deleting the plugin now removes its stored option.
+* Change: Tested up to WordPress 7.1.
 
 = 1.2.0 =
 * Add a Settings page (Media > Settings) to turn auto-tagging on or off.
