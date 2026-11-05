@@ -28,7 +28,7 @@ export default function TermTokenInput( {
 					( term.path || term.name )
 						.toLowerCase()
 						.includes( trimmed.toLowerCase() )
-			  )
+				)
 			: available
 	).slice( 0, 8 );
 

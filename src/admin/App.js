@@ -212,7 +212,7 @@ export default function App() {
 								),
 								ids.length - skipped,
 								skipped
-						  )
+							)
 						: __( 'Categories updated.', 'simple-media-categories' )
 				);
 				selection.clear();

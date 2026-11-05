@@ -64,7 +64,7 @@ export default function RetroRunner( { enabled } ) {
 						: __(
 								'Tag existing media now',
 								'simple-media-categories'
-						  ) }
+							) }
 				</Button>
 				{ ! enabled && (
 					<p className="smc-settings__hint">
