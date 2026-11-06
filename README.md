@@ -103,10 +103,10 @@ Source layout: `includes/` holds the PHP classes (taxonomy, REST controller, aut
 Bump `Version` and `SMC_VERSION` in `simple-media-categories.php`, `version` in `package.json`, and `Stable tag` in `readme.txt`, add a changelog entry under `== Changelog ==`, commit, then push a `v`-prefixed tag:
 
 ```bash
-git tag v1.3.1 && git push origin v1.3.1
+git tag v1.3.2 && git push origin v1.3.2
 ```
 
-The release workflow (`.github/workflows/release.yml`) runs `npm ci`, `npm run build`, and `npm run plugin-zip`, pulls the matching `= X.Y.Z =` block out of `readme.txt` for the release notes, and attaches `simple-media-categories.zip` and `readme.txt` to the GitHub release. Plugin Update Checker serves that zip to installed sites.
+The release workflow (`.github/workflows/release.yml`) runs `npm ci`, `npm run build`, and `npm run plugin-zip`, pulls the matching `= X.Y.Z =` block out of `readme.txt` for the release notes, and attaches `simple-media-categories.zip` and `readme.txt` to the GitHub release. Plugin Update Checker serves that zip to installed sites. The checker filters release assets to `.zip` names and requires one: without the filter it takes the first asset on the release, which GitHub lists by name, so sites would download `readme.txt` and fail with `PCLZIP_ERR_BAD_FORMAT`.
 
 ## Limitations
 

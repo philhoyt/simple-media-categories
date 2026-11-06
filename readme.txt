@@ -3,7 +3,7 @@ Contributors: philhoyt
 Tags: media, categories, taxonomy, attachments
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,6 +54,9 @@ No. There are no templates, shortcodes, or blocks. The taxonomy is for organisin
 The terms and assignments stay in the database. Only the plugin's own settings option is removed.
 
 == Changelog ==
+
+= 1.3.2 =
+* Fixed dashboard updates failing with "PCLZIP_ERR_BAD_FORMAT" because the plugin downloaded the release's readme.txt instead of its zip. Sites on 1.3.1 or older need to install this version once by uploading the zip; later updates work from the dashboard.
 
 = 1.3.1 =
 * Fixed update checks failing with a missing class: the update checker's bundled Markdown and readme parsers now ship with the plugin.
